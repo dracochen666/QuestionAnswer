@@ -28,7 +28,60 @@
 
 ​	计算属性：
 
-​		
+
+
+# ==机制==
+
+----
+
+### OC
+
+#### OC对象分裂
+
+- `instance` 表示一个对象的实例，包括对象的实例变量和实例方法等属性和行为。每个对象实例都有一个对应的 `isa` 指针，用于指向其所属的 `Class` 对象。
+
+- `Class` 表示一个类对象，用于描述一个类的属性和行为，包括实例变量、实例方法、类方法、协议等。每个类都有一个对应的 `Class` 对象，可以通过向一个对象发送 `class` 消息来获取其所属的 `Class` 对象。
+
+- `metaclass` 表示一个类对象的类，用于描述一个类对象本身的属性和行为，包括类方法等。每个 `Class` 对象都有一个对应的 `metaclass`，可以通过向一个 `Class` 对象发送 `class` 消息来获取其所属的 `metaclass`。
+
+  <img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/20/167cae9a18f98b28~tplv-t2oaga2asx-zoom-in-crop-mark:4536:0:0:0.image" alt="OC_2_%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%88%86%E7%B1%BB_isa%3Asupercalss%E6%80%BB%E7%BB%93.png" style="zoom:50%;" />
+
+  
+
+### KVC
+
+​	KVC(Key-Value Coding)键值编码是一种非正式协议，遵循这个协议的类可以通过字符串访问和修改对象属性。NSObject类作为Objective-C的根类遵循了KVC，所以所有继承自NSObject的类都可以调用KVC方法。
+
+​	在Swift中通过@objc dynamic 来修饰成员变量就可以通过KVC机制访问该变量
+
+- `valueForKey:` 方法：用于获取对象的属性值。
+- `setValue:forKey:` 方法：用于设置对象的属性值。
+- `valueForKeyPath:` 方法：用于获取对象的属性路径的值。
+- `setValue:forKeyPath:` 方法：用于设置对象的属性路径的值。
+- `mutableArrayValueForKey:` 方法：用于获取对象的属性对应的可变数组。
+- `mutableArrayValueForKeyPath:` 方法：用于获取对象的属性路径对应的可变数组。
+
+#### 访问者探索模式
+
+Accessor Search Patterns 是指 KVC 在访问对象属性时所使用的算法。它包括了一系列的查找规则，用于解析 key path 并获取对应的属性值。在实现 KVC 时，我们应该尽量使用属性的访问方法来访问属性值，以保证 KVC 的正确性。如果一个类没有声明属性或实现任何属性访问方法，KVC 将无法访问该类的属性，此时可以使用 `setValue:forUndefinedKey:` 和 `valueForUndefinedKey:` 方法来实现自定义的访问行为。
+
+### KVO		
+
+#### 动态生成类 NSKVONotifying
+
+给实例对象Instance属性添加观察者后会动态生成名为NSKVONotifying_XXX的子类，实例对象isa指针指向从类对象改为NSKVONotifying_XXX，该子类isa指向类对象。
+
+NSKVONotifying类重写了类对象被观察属性的setter方法（添加观察者回调方法），即可做到当属性发生变化时通过回调方法通知属性变化。
+
+#### 回调方法
+
+1、observeValue(forKeyPath:of:change:context:)
+
+2、willChangeValue(forKey:)
+
+3、didChangeValue(forKey:)
+
+4、observe(_:selector:name:object:)
 
 # ==关键字==
 

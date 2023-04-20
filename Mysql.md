@@ -1,8 +1,6 @@
 Mysql 密码修改
 
-首先关闭设置中的Mysql服务
-
-
+#### 首先关闭设置中的Mysql服务
 
 ① 进入mysql文件夹    cd /usr/local/mysql/bin    回车
 
